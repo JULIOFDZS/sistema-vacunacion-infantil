@@ -1,0 +1,345 @@
+
+/*
+====================================================
+ ARCHIVO: src/styles/Login.css
+ FUNCIÓN: Diseño visual del inicio de sesión
+====================================================
+*/
+
+/* Incluye bordes y rellenos en el tamaño total. */
+* {
+  box-sizing: border-box;
+}
+
+/* Configuración general de la página. */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Divide la pantalla en dos columnas iguales. */
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #f7f9fc;
+}
+
+/*
+====================================================
+ PANEL IZQUIERDO
+====================================================
+*/
+
+/* Fondo azul oscuro con degradados. */
+.login-info {
+  background:
+    radial-gradient(
+      circle at 15% 80%,
+      #164d61 0%,
+      transparent 45%
+    ),
+    linear-gradient(145deg, #0c172c, #142c49);
+
+  color: white;
+  padding: 45px 65px;
+
+  /* Organiza los elementos verticalmente. */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Estilo del logo y el nombre del sistema. */
+.login-brand,
+.login-mobile-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+/* Color verde de los iconos del logo. */
+.login-brand svg,
+.login-mobile-brand svg {
+  color: #58e6bd;
+}
+
+/* Limita el ancho del texto informativo. */
+.login-info-content {
+  max-width: 530px;
+}
+
+/* Etiqueta superior de presentación. */
+.login-tag {
+  display: inline-block;
+  color: #64e5c5;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+/* Título principal. */
+.login-info-content h1 {
+  font-size: clamp(36px, 4vw, 58px);
+  line-height: 1.15;
+  letter-spacing: -2px;
+  margin: 0 0 24px;
+}
+
+/* Destaca parte del título en verde. */
+.login-info-content h1 span {
+  color: #60e6c3;
+}
+
+/* Texto descriptivo del sistema. */
+.login-info-content > p {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #b8c9dd;
+}
+
+/* Tarjeta informativa de seguridad. */
+.login-info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 17px;
+  padding: 24px;
+  margin-top: 45px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+}
+
+/* Icono dentro de la tarjeta. */
+.login-info-card svg {
+  color: #60e6c3;
+  flex-shrink: 0;
+}
+
+/* Título de la tarjeta. */
+.login-info-card strong {
+  font-size: 16px;
+}
+
+/* Descripción de la tarjeta. */
+.login-info-card p {
+  color: #b8c9dd;
+  line-height: 1.6;
+  font-size: 14px;
+  margin: 7px 0 0;
+}
+
+/* Texto inferior del panel izquierdo. */
+.login-footer {
+  color: #8298b5;
+  font-size: 13px;
+}
+
+/*
+====================================================
+ PANEL DERECHO: FORMULARIO
+====================================================
+*/
+
+/* Centra el formulario horizontal y verticalmente. */
+.login-form-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+/* Ancho máximo del formulario. */
+.login-form-container {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* El logo móvil se oculta en computadoras. */
+.login-mobile-brand {
+  display: none;
+}
+
+/* Espacio debajo del encabezado. */
+.login-heading {
+  margin-bottom: 36px;
+}
+
+/* Título de bienvenida. */
+.login-heading h2 {
+  font-size: 32px;
+  color: #14223a;
+  letter-spacing: -1px;
+  margin: 0 0 10px;
+}
+
+/* Subtítulo del formulario. */
+.login-heading p {
+  color: #718098;
+  font-size: 15px;
+  margin: 0;
+}
+
+/* Espacio entre campos. */
+.login-field {
+  margin-bottom: 23px;
+}
+
+/* Etiquetas de correo y contraseña. */
+.login-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #34425b;
+  margin-bottom: 10px;
+}
+
+/* Contenedor del icono y el campo de texto. */
+.login-input-wrapper {
+  height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  border: 1px solid #dce4ee;
+  border-radius: 12px;
+  padding: 0 15px;
+  background: white;
+
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+/* Resalta el campo cuando el usuario escribe. */
+.login-input-wrapper:focus-within {
+  border-color: #16ad91;
+  box-shadow: 0 0 0 4px rgba(22, 173, 145, 0.1);
+}
+
+/* Iconos de los campos. */
+.login-input-wrapper > svg {
+  color: #91a0b5;
+  flex-shrink: 0;
+}
+
+/* Estilo de los inputs. */
+.login-input-wrapper input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font: inherit;
+  font-size: 14px;
+  color: #17253b;
+  background: transparent;
+}
+
+/* Color del texto de ejemplo. */
+.login-input-wrapper input::placeholder {
+  color: #a5afbf;
+}
+
+/* Botón del icono para mostrar contraseña. */
+.login-eye {
+  border: none;
+  background: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #8797ac;
+
+  display: flex;
+  align-items: center;
+}
+
+/* Botón principal de inicio de sesión. */
+.login-submit {
+  width: 100%;
+  height: 54px;
+  border: none;
+  border-radius: 12px;
+
+  background: linear-gradient(100deg, #0c947f, #12b89b);
+  color: white;
+
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  margin-top: 12px;
+
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+/* Efecto al pasar el cursor sobre el botón. */
+.login-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(12, 148, 127, 0.2);
+}
+
+/* Apariencia mientras se verifica el login. */
+.login-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Mensaje de error de autenticación. */
+.login-error {
+  background: #fff0f0;
+  color: #ba3030;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* Mensaje inferior de seguridad. */
+.login-security-note {
+  margin-top: 28px;
+  text-align: center;
+  color: #8794a8;
+  font-size: 12px;
+}
+
+/*
+====================================================
+ DISEÑO RESPONSIVE
+ Adaptación a pantallas pequeñas
+====================================================
+*/
+
+@media (max-width: 850px) {
+
+  /* Utilizamos una sola columna. */
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  /* Ocultamos el panel informativo izquierdo. */
+  .login-info {
+    display: none;
+  }
+
+  /* Centramos el formulario en el celular. */
+  .login-form-section {
+    min-height: 100vh;
+    padding: 30px 22px;
+  }
+
+  /* Mostramos el logo móvil. */
+  .login-mobile-brand {
+    display: flex;
+    color: #14223a;
+    margin-bottom: 55px;
+  }
+}

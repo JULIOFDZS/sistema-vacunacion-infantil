@@ -1,0 +1,33 @@
+
+/*
+====================================================
+ ARCHIVO: src/index.css
+ FUNCIÓN: Estilos generales de la aplicación
+====================================================
+*/
+
+/* Aplicamos un cálculo uniforme de tamaños. */
+* {
+  box-sizing: border-box;
+}
+
+/* Estilos globales del documento. */
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+/* Fuente y color general del sistema. */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f7f9fc;
+  color: #17253b;
+}
+
+/* Los botones y campos heredan la fuente. */
+button,
+input {
+  font: inherit;
+}

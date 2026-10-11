@@ -1,0 +1,57 @@
+
+# ==========================================
+# ENTORNO VIRTUAL DE PYTHON
+# ==========================================
+# No subir las librerías instaladas localmente.
+venv/
+.venv/
+
+# ==========================================
+# ARCHIVOS TEMPORALES DE PYTHON
+# ==========================================
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# ==========================================
+# DEPENDENCIAS DE REACT
+# ==========================================
+# Se pueden reinstalar con npm install.
+node_modules/
+dist/
+.vite/
+
+# ==========================================
+# CONTRASEÑAS Y VARIABLES PRIVADAS
+# ==========================================
+# Protege las claves de conexión y JWT.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ==========================================
+# BASES DE DATOS Y RESPALDOS
+# ==========================================
+# No subir datos reales de pacientes.
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+*.bacpac
+*.sql
+
+# ==========================================
+# ARCHIVOS IMPORTADOS CON DATOS
+# ==========================================
+*.csv
+*.xlsx
+*.xls
+
+# ==========================================
+# ARCHIVOS TEMPORALES
+# ==========================================
+*.log
+.vscode/
+.idea/
