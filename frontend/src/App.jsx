@@ -1,4 +1,3 @@
-
 /*
 ====================================================
  ARCHIVO: src/App.jsx
@@ -6,7 +5,6 @@
 ====================================================
 */
 
-// Importamos las herramientas de navegación.
 import {
   BrowserRouter,
   Routes,
@@ -14,126 +12,101 @@ import {
   Navigate,
 } from "react-router-dom";
 
-// Importamos el sistema de autenticación.
-import {
-  AuthProvider,
-  useAuth,
-} from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
-// Importamos la pantalla de login.
 import Login from "./pages/Login";
+import Layout from "./components/Layout";
+import Dashboard from "./pages/Dashboard";
+import Pacientes from "./pages/Pacientes";
+import PacienteDetalle from "./pages/PacienteDetalle";
+import Importar from "./pages/Importar";
+import Esquema from "./pages/Esquema";
+import Usuarios from "./pages/Usuarios";
 
-/*
-COMPONENTE: DashboardTemporal
-
-Es una pantalla provisional.
-En el Bloque 13.3 crearemos el Dashboard completo.
-*/
-function DashboardTemporal() {
-
-  // Obtenemos los datos del usuario y el cierre de sesión.
-  const { usuario, cerrarSesion } = useAuth();
-
-  return (
-    <main style={{ padding: 40, fontFamily: "Arial" }}>
-
-      <h1>¡Bienvenido a VacunaControl!</h1>
-
-      <p>
-        Inicio de sesión realizado correctamente.
-      </p>
-
-      {/* Mostramos los datos devueltos por /auth/me.
-          Esto es únicamente para pruebas de desarrollo. */}
-      <pre>
-        {JSON.stringify(usuario, null, 2)}
-      </pre>
-
-      {/* Botón para cerrar sesión. */}
-      <button onClick={cerrarSesion}>
-        Cerrar sesión
-      </button>
-
-    </main>
-  );
-}
+import "./styles/App.css";
 
 /*
 COMPONENTE: RutaProtegida
 
-Evita que una persona sin sesión iniciada
-acceda al Dashboard.
+Exige sesión iniciada y, opcionalmente, un permiso:
+- "escritura": admin y operador.
+- "admin": solo administrador.
+Recuerda que el backend valida los permisos de verdad;
+esto solo evita mostrar pantallas inútiles.
 */
-function RutaProtegida({ children }) {
+function RutaProtegida({ children, requiere }) {
+  const { usuario, esAdmin, puedeEscribir } = useAuth();
 
-  const { usuario } = useAuth();
-
-  // Si no hay usuario, enviamos al login.
   if (!usuario) {
     return <Navigate to="/login" replace />;
   }
 
-  // Si está autenticado, mostramos la pantalla.
+  if (requiere === "admin" && !esAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (requiere === "escritura" && !puedeEscribir) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return children;
 }
 
-/*
-COMPONENTE: AppRoutes
-
-Define las direcciones disponibles.
-*/
 function AppRoutes() {
-
   const { usuario } = useAuth();
 
   return (
     <Routes>
-
-      {/* Ruta de inicio de sesión. */}
       <Route
         path="/login"
         element={
-          usuario
-            ? <Navigate to="/dashboard" replace />
-            : <Login />
+          usuario ? <Navigate to="/dashboard" replace /> : <Login />
         }
       />
 
-      {/* Ruta protegida del Dashboard. */}
+      {/* Todas las pantallas internas comparten el Layout. */}
       <Route
-        path="/dashboard"
         element={
           <RutaProtegida>
-            <DashboardTemporal />
+            <Layout />
           </RutaProtegida>
         }
-      />
+      >
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/pacientes" element={<Pacientes />} />
+        <Route path="/pacientes/:id" element={<PacienteDetalle />} />
+        <Route path="/esquema" element={<Esquema />} />
 
-      {/* Cualquier ruta desconocida vuelve al login. */}
-      <Route
-        path="*"
-        element={<Navigate to="/login" replace />}
-      />
+        <Route
+          path="/importar"
+          element={
+            <RutaProtegida requiere="escritura">
+              <Importar />
+            </RutaProtegida>
+          }
+        />
 
+        <Route
+          path="/usuarios"
+          element={
+            <RutaProtegida requiere="admin">
+              <Usuarios />
+            </RutaProtegida>
+          }
+        />
+      </Route>
+
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
 
-/*
-COMPONENTE PRINCIPAL: App
-
-BrowserRouter activa la navegación.
-AuthProvider comparte la autenticación.
-*/
 export default function App() {
-
   return (
     <BrowserRouter>
-
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>
-
     </BrowserRouter>
   );
 }

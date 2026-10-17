@@ -55,3 +55,12 @@ dist/
 *.log
 .vscode/
 .idea/
+
+# Copias de seguridad locales del proyecto.
+respaldos/
+
+# Archivos temporales utilizados para integrar React.
+integracion_temporal/
+
+# Copias de seguridad del proyecto.
+respaldos/

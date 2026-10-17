@@ -12,6 +12,11 @@
 # El sistema no debe declarar que un niño tiene
 # su vacunación completa cuando faltan datos,
 # reglas validadas o equivalencias de vacunas.
+#
+# CORRECCIÓN:
+# Se reemplazaron las comparaciones .is_(True)
+# y .is_(False) por == 1 y == 0, respectivamente,
+# para evitar errores de sintaxis en SQL Server.
 # ============================================================
 
 
@@ -21,20 +26,15 @@
 
 # date:
 # Permite trabajar con fechas.
-
 from datetime import date
 
 # Session:
-# Permite realizar consultas a SQLite.
-
+# Permite realizar consultas a la base de datos.
 from sqlalchemy.orm import Session
 
 # Modelos de la base de datos.
-
 from backend.models.aplicacion import Aplicacion
-
 from backend.models.vacuna import Vacuna
-
 from backend.models.esquema_dosis import EsquemaDosis
 
 
@@ -65,11 +65,9 @@ def calcular_edad_meses(paciente):
         return None
 
     # Obtener fecha actual.
-
     hoy = date.today()
 
     # Obtener fecha de nacimiento.
-
     nacimiento = paciente.fecha_nacimiento
 
     # --------------------------------------------------------
@@ -77,7 +75,6 @@ def calcular_edad_meses(paciente):
     # --------------------------------------------------------
 
     # Una fecha futura no es válida.
-
     if nacimiento > hoy:
         return None
 
@@ -132,7 +129,15 @@ def obtener_aplicadas(paciente_id, db: Session):
         db.query(Aplicacion)
         .filter(
             Aplicacion.paciente_id == paciente_id,
-            Aplicacion.anulada.is_(False)
+
+            # CORRECCIÓN SQL SERVER:
+            # Antes: Aplicacion.anulada.is_(False)
+            #
+            # SQL Server no admite "IS 0".
+            # Utilizamos == 0 para obtener las
+            # aplicaciones que no están anuladas.
+
+            Aplicacion.anulada == 0
         )
         .order_by(Aplicacion.id)
         .all()
@@ -147,11 +152,9 @@ def obtener_aplicadas(paciente_id, db: Session):
     for aplicacion in aplicaciones:
 
         # Obtener la vacuna relacionada.
-
         vacuna = aplicacion.vacuna
 
         # Evitar errores si falta la relación.
-
         if vacuna is None:
             continue
 
@@ -193,16 +196,36 @@ def obtener_dosis_requeridas(edad_meses, db: Session):
     """
 
     # Si no conocemos la edad, no evaluamos.
-
     if edad_meses is None:
         return []
+
+    # --------------------------------------------------------
+    # CONSULTAR REGLAS DEL ESQUEMA
+    # --------------------------------------------------------
 
     reglas = (
         db.query(EsquemaDosis)
         .filter(
-            EsquemaDosis.activa.is_(True),
-            EsquemaDosis.obligatoria.is_(True),
+
+            # CORRECCIÓN SQL SERVER:
+            # Antes: EsquemaDosis.activa.is_(True)
+            #
+            # 1 significa que la regla está activa.
+
+            EsquemaDosis.activa == 1,
+
+            # CORRECCIÓN SQL SERVER:
+            # Antes: EsquemaDosis.obligatoria.is_(True)
+            #
+            # 1 significa que la regla es obligatoria.
+
+            EsquemaDosis.obligatoria == 1,
+
+            # Comprobar que exista una edad mínima.
             EsquemaDosis.edad_minima_meses.isnot(None),
+
+            # Consultar reglas cuya edad mínima
+            # ya fue alcanzada por el paciente.
             EsquemaDosis.edad_minima_meses <= edad_meses
         )
         .order_by(
@@ -211,6 +234,10 @@ def obtener_dosis_requeridas(edad_meses, db: Session):
         )
         .all()
     )
+
+    # --------------------------------------------------------
+    # PREPARAR RESULTADOS
+    # --------------------------------------------------------
 
     resultado = []
 
@@ -280,7 +307,14 @@ def calcular_estado_vacunacion(paciente, db: Session):
     total_reglas_activas = (
         db.query(EsquemaDosis)
         .filter(
-            EsquemaDosis.activa.is_(True)
+
+            # CORRECCIÓN SQL SERVER:
+            # Antes: EsquemaDosis.activa.is_(True)
+            #
+            # Se utiliza == 1 para generar
+            # una consulta compatible con SQL Server.
+
+            EsquemaDosis.activa == 1
         )
         .count()
     )
@@ -389,11 +423,8 @@ def calcular_estado_vacunacion(paciente, db: Session):
     # No representa dosis clínicamente pendientes.
 
     sin_coincidencia_exacta = [
-
         regla
-
         for regla in reglas_por_edad
-
         if regla["codigo"] not in codigos_aplicados
     ]
 

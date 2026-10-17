@@ -1,4 +1,3 @@
-
 /*
 ====================================================
  ARCHIVO: src/services/api.js
@@ -6,45 +5,55 @@
 ====================================================
 */
 
-// Importamos Axios, una librería para hacer peticiones HTTP.
 import axios from "axios";
 
-// Creamos una conexión reutilizable con nuestro backend.
+// La URL del backend puede cambiarse con VITE_API_URL
+// (por ejemplo en un archivo .env.local). Por defecto
+// se usa el FastAPI local del entorno de desarrollo.
+const BASE_URL =
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
 const api = axios.create({
-
-  // Dirección donde se está ejecutando FastAPI.
-  baseURL: "http://127.0.0.1:8000",
-
-  // Tiempo máximo de espera: 10 segundos.
-  timeout: 10000,
-
+  baseURL: BASE_URL,
+  timeout: 15000,
 });
+
+// Función que App registra para cerrar la sesión cuando
+// el backend responde 401 (token vencido o inválido).
+let alExpirarSesion = null;
+
+export function registrarExpiracionSesion(funcion) {
+  alExpirarSesion = funcion;
+}
+
+api.interceptors.response.use(
+  (respuesta) => respuesta,
+  (error) => {
+    const url = error.config?.url || "";
+    const esLogin = url.includes("/auth/login");
+
+    // Un 401 fuera del login significa sesión vencida.
+    if (error.response?.status === 401 && !esLogin) {
+      alExpirarSesion?.();
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 /*
 FUNCIÓN: configurarToken
 
-Sirve para agregar el token de autenticación a las
-peticiones que realizamos al backend.
-
-FastAPI utiliza ese token para identificar al usuario.
+Agrega (o quita) el token JWT de las peticiones.
+El token se guarda solo en memoria, tal como indica
+el README del proyecto.
 */
 export function configurarToken(token) {
-
-  // Si recibimos un token válido...
   if (token) {
-
-    // Lo agregamos a la cabecera Authorization.
-    api.defaults.headers.common.Authorization =
-      `Bearer ${token}`;
-
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
   } else {
-
-    // Si no hay token, eliminamos la autorización.
-    // Esto se utiliza al cerrar sesión.
     delete api.defaults.headers.common.Authorization;
-
   }
 }
 
-// Exportamos la conexión para utilizarla en otros archivos.
 export default api;
